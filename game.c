@@ -1,8 +1,7 @@
 #include <stdlib.h>
 
 #include "game.h"
-#include "othello.h"
-#include "graphics.h"
+
 
 void newGame(t_game *game, GObject *communicator){
 
@@ -54,6 +53,7 @@ bool lehetosegSzamol(t_game *game){
 			if(game->table[x][y] == MEZO_URES || game->table[x][y] == MEZO_KATTINTHATO){
 				lehete = false;
 
+				//szélrózsa minden irányába vizsgáljuk a lehetséges lépéseket
 				for(dx = -1; dx <= 1; dx++){
 				for(dy = -1; dy <= 1; dy++){
 					if(!lehete && (dx != 0 || dy != 0)){
@@ -70,7 +70,8 @@ bool lehetosegSzamol(t_game *game){
 								lehete = true;
 						}
 					}
-					//kilépés a ciklusból
+
+					//elég, hogy 1 irányba jó legyen: kilépés a ciklusból
 					if(lehete){
 						dx = dy = 2;
 					}
@@ -104,203 +105,43 @@ void lep(t_game *game, char *kurzor, GObject *communicator){
 	if(game->table[kurzorx][kurzory] == MEZO_KATTINTHATO){
 		game->table[kurzorx][kurzory] = (t_mezo) jatekos;
 		signed char xx, yy;
+		signed char dx, dy;
 		bool lehete;
 		char x, y;
 		x = kurzorx;
 		y = kurzory;
 
-		//fel
-		xx = x;
-		yy = y;
-		do{
-			yy--;
-			lehete = false;
-			if(yy >= 0 && game->table[xx][yy] == other_jatekos){
-				lehete = true;
-			}
-		}while(lehete);
-		if(yy >= 0 && abs(yy - y) != 1 && game->table[xx][yy] == jatekos){
-			xx = x;
-			yy = y;
-			do{
-				yy--;
-				lehete = false;
-				if(yy >= 0 && game->table[xx][yy] == other_jatekos){
-					game->table[xx][yy] = (t_mezo) jatekos;
-					lehete = true;
+		for(dx = -1; dx <= 1; dx++){
+		for(dy = -1; dy <= 1; dy++){
+			if(dx != 0 || dy != 0){
+				//jobbra-fel
+				xx = x;
+				yy = y;
+				do{
+					yy+=dy;
+					xx+=dx;
+					lehete = false;
+					if(0 <= yy && yy <= 7 && 0 <= xx && xx <= 7 && game->table[xx][yy] == other_jatekos){
+						lehete = true;
+					}
+				}while(lehete);
+				if(0 <= yy && yy <= 7 && 0 <= xx && xx <= 7 && abs(yy - y) != 1 && abs(xx - x) != 1 && game->table[xx][yy] == jatekos){
+					xx = x;
+					yy = y;
+					do{
+						yy+=dy;
+						xx+=dx;
+						lehete = false;
+						if(0 <= yy && yy <= 7 && 0 <= xx && xx <= 7 && game->table[xx][yy] == other_jatekos){
+							game->table[xx][yy] = (t_mezo) jatekos;
+							lehete = true;
+						}
+					}while(lehete);
 				}
-			}while(lehete);
-		}
-
-		//jobbra-fel
-		xx = x;
-		yy = y;
-		do{
-			yy--;
-			xx++;
-			lehete = false;
-			if(yy >= 0 && xx <= 7 && game->table[xx][yy] == other_jatekos){
-				lehete = true;
 			}
-		}while(lehete);
-		if(yy >= 0 && xx <= 7 && abs(yy - y) != 1 && game->table[xx][yy] == jatekos){
-			xx = x;
-			yy = y;
-			do{
-				yy--;
-				xx++;
-				lehete = false;
-				if(yy >= 0 && xx <= 7 && game->table[xx][yy] == other_jatekos){
-					game->table[xx][yy] = (t_mezo) jatekos;
-					lehete = true;
-				}
-			}while(lehete);
 		}
-
-		//jobbra
-		xx = x;
-		yy = y;
-		do{
-			xx++;
-			lehete = false;
-			if(xx <= 7 && game->table[xx][yy] == other_jatekos){
-				lehete = true;
-			}
-		}while(lehete);
-		if(xx <= 7 && abs(xx - x) != 1 && game->table[xx][yy] == jatekos){
-			xx = x;
-			yy = y;
-			do{
-				xx++;
-				lehete = false;
-				if(xx <= 7 && game->table[xx][yy] == other_jatekos){
-					game->table[xx][yy] = (t_mezo) jatekos;
-					lehete = true;
-				}
-			}while(lehete);
 		}
-
-
-		//jobbra-le
-		xx = x;
-		yy = y;
-		do{
-			yy++;
-			xx++;
-			lehete = false;
-			if(yy <= 7 && xx <= 7 && game->table[xx][yy] == other_jatekos){
-				lehete = true;
-			}
-		}while(lehete);
-		if(yy <= 7 && xx <= 7 && abs(yy - y) != 1 && game->table[xx][yy] == jatekos){
-			xx = x;
-			yy = y;
-			do{
-				yy++;
-				xx++;
-				lehete = false;
-				if(yy <= 7 && xx <= 7 && game->table[xx][yy] == other_jatekos){
-					game->table[xx][yy] = (t_mezo) jatekos;
-					lehete = true;
-				}
-			}while(lehete);
-		}
-
-		//le
-		xx = x;
-		yy = y;
-		do{
-			yy++;
-			lehete = false;
-			if(yy <= 7 && game->table[xx][yy] == other_jatekos){
-				lehete = true;
-			}
-		}while(lehete);
-		if(yy <= 7 && abs(yy - y) != 1 && game->table[xx][yy] == jatekos){
-			xx = x;
-			yy = y;
-			do{
-				yy++;
-				lehete = false;
-				if(yy <= 7 && game->table[xx][yy] == other_jatekos){
-					game->table[xx][yy] = (t_mezo) jatekos;
-					lehete = true;
-				}
-			}while(lehete);
-		}
-
-		//balra-le
-		xx = x;
-		yy = y;
-		do{
-			yy++;
-			xx--;
-			lehete = false;
-			if(yy <= 7 && xx >= 0 && game->table[xx][yy] == other_jatekos){
-				lehete = true;
-			}
-		}while(lehete);
-		if(yy <= 7 && xx >= 0 && abs(yy - y) != 1 && game->table[xx][yy] == jatekos){
-			xx = x;
-			yy = y;
-			do{
-				yy++;
-				xx--;
-				lehete = false;
-				if(yy <= 7 && xx >= 0 && game->table[xx][yy] == other_jatekos){
-					game->table[xx][yy] = (t_mezo) jatekos;
-					lehete = true;
-				}
-			}while(lehete);
-		}
-
-		//balra
-		xx = x;
-		yy = y;
-		do{
-			xx--;
-			lehete = false;
-			if(xx >= 0 && game->table[xx][yy] == other_jatekos){
-				lehete = true;
-			}
-		}while(lehete);
-		if(xx >= 0 && abs(xx - x) != 1 && game->table[xx][yy] == jatekos){
-			xx = x;
-			yy = y;
-			do{
-				xx--;
-				lehete = false;
-				if(xx >= 0 && game->table[xx][yy] == other_jatekos){
-					game->table[xx][yy] = (t_mezo) jatekos;
-					lehete = true;
-				}
-			}while(lehete);
-		}
-
-		//balra-fel
-		xx = x;
-		yy = y;
-		do{
-			yy--;
-			xx--;
-			lehete = false;
-			if(yy >= 0 && xx >= 0 && game->table[xx][yy] == other_jatekos){
-				lehete = true;
-			}
-		}while(lehete);
-		if(yy >= 0 && xx >= 0 && abs(yy - y) != 1 && game->table[xx][yy] == jatekos){
-			xx = x;
-			yy = y;
-			do{
-				yy--;
-				xx--;
-				lehete = false;
-				if(yy >= 0 && xx >= 0 && game->table[xx][yy] == other_jatekos){
-					game->table[xx][yy] = (t_mezo) jatekos;
-					lehete = true;
-				}
-			}while(lehete);
-		}
+		
 
 		game->next = other_jatekos;
 		lehetosegSzamol(game);
