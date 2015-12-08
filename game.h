@@ -17,6 +17,9 @@
  *
  * 		user-new-game:		a felhasználó megnyomta az új játék gombot
  * 							params: t_game * game
+ *
+ * 		user-new-move:		a felhasználó rákattintott egy mezőre
+ * 							params: char * kurzor: a kattintott mező 2 koordinátája
  */
 void initSignals();
 
@@ -61,6 +64,11 @@ t_player otherPlayer(t_player player);
  */
 bool lehetosegSzamol(t_game *game);
 
+/**
+ * Megcsinálja a lépést, átfordítja a korongokat
+ *
+ * @param [char *] kurzor	amelyik mezőre az új korongot helyezzük. 2 elemű tömb
+ */
 void lep(t_game *game, char *kurzor, GObject *communicator);
 
 #endif //OTHELLO_GAME_H
