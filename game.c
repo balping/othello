@@ -41,7 +41,7 @@ t_player otherPlayer(t_player player){
 
 bool lehetosegSzamol(t_game *game){
 	char x, y;
-	bool lehete = false;
+	bool lehete;
 	signed char xx, yy;
 	signed char dx, dy;
 	bool volte = false;
@@ -52,111 +52,31 @@ bool lehetosegSzamol(t_game *game){
 	for(x = 0; x <= 7; x++){
 		for(y = 0; y <= 7; y++){
 			if(game->table[x][y] == MEZO_URES || game->table[x][y] == MEZO_KATTINTHATO){
-				//fel
-				xx = x;
-				yy = y;
-				do{
-					yy--;
-					lehete = yy >= 0 && game->table[xx][yy] == other_jatekos;
-				}while(lehete);
-				if(yy >= 0 && abs(yy - y) != 1 && game->table[xx][yy] == jatekos){
-					lehete = true;
-				}
+				lehete = false;
 
-				//jobbra-fel
-				if(!lehete){
-					xx = x;
-					yy = y;
-					do{
-						yy--;
-						xx++;
-						lehete = yy >= 0 && xx <= 7 && game->table[xx][yy] == other_jatekos;
-					}while(lehete);
-					if(yy >= 0 && xx <= 7 && abs(yy - y) != 1 && game->table[xx][yy] == jatekos){
-						lehete = true;
+				for(dx = -1; dx <= 1; dx++){
+				for(dy = -1; dy <= 1; dy++){
+					if(!lehete && (dx != 0 || dy != 0)){
+						xx = x;
+						yy = y;
+						do{
+							yy+=dy;
+							xx+=dx;
+							lehete = 0 <= yy && yy <= 7 && 0 <= xx && xx <= 7 && game->table[xx][yy] == other_jatekos;
+						}while(lehete);
+						if(0 <= yy && yy <= 7 && 0 <= xx && xx <= 7 &&
+							  abs(yy - y) != 1 && abs(xx - x) != 1 &&
+							  game->table[xx][yy] == jatekos){
+								lehete = true;
+						}
+					}
+					//kilépés a ciklusból
+					if(lehete){
+						dx = dy = 2;
 					}
 				}
-
-				//jobbra
-				if(!lehete){
-					xx = x;
-					yy = y;
-					do{
-						xx++;
-						lehete = xx <= 7 && game->table[xx][yy] == other_jatekos;
-					}while(lehete);
-					if(xx <= 7 && abs(xx - x) != 1 && game->table[xx][yy] == jatekos){
-						lehete = true;
-					}
 				}
 
-				//jobbra-le
-				if(!lehete){
-					xx = x;
-					yy = y;
-					do{
-						yy++;
-						xx++;
-						lehete = yy <= 7 && xx <= 7 && game->table[xx][yy] == other_jatekos;
-					}while(lehete);
-					if(yy <= 7 && xx <= 7 && abs(yy - y) != 1 && game->table[xx][yy] == jatekos){
-						lehete = true;
-					}
-				}
-
-				//le
-				if(!lehete){
-					xx = x;
-					yy = y;
-					do{
-						yy++;
-						lehete = yy <= 7 && game->table[xx][yy] == other_jatekos;
-					}while(lehete);
-					if(yy <= 7 && abs(yy - y) != 1 && game->table[xx][yy] == jatekos){
-						lehete = true;
-					}
-				}
-
-				//balra-le
-				if(!lehete){
-					xx = x;
-					yy = y;
-					do{
-						yy++;
-						xx--;
-						lehete = yy <= 7 && xx >= 0 && game->table[xx][yy] == other_jatekos;
-					}while(lehete);
-					if(yy <= 7 && xx >= 0 && abs(yy - y) != 1 && game->table[xx][yy] == jatekos){
-						lehete = true;
-					}
-				}
-
-				//balra
-				if(!lehete){
-					xx = x;
-					yy = y;
-					do{
-						xx--;
-						lehete = xx >= 0 && game->table[xx][yy] == other_jatekos;
-					}while(lehete);
-					if(xx >= 0 && abs(xx - x) != 1 && game->table[xx][yy] == jatekos){
-						lehete = true;
-					}
-				}
-
-				//balra-fel
-				if(!lehete){
-					xx = x;
-					yy = y;
-					do{
-						yy--;
-						xx--;
-						lehete = yy >= 0 && xx >= 0 && game->table[xx][yy] == other_jatekos;
-					}while(lehete);
-					if(yy >= 0 && xx >= 0 && abs(yy - y) != 1 && game->table[xx][yy] == jatekos){
-						lehete = true;
-					}
-				}
 
 				if(lehete){
 					game->table[x][y] = MEZO_KATTINTHATO;
