@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+	<gresource prefix="/othello">
+		<file>feher.png</file>
+		<file>fekete.png</file>
+		<file>ures.png</file>
+		<file>kattinthato.png</file>
+		<file>icon.png</file>
+		<file preprocess="xml-stripblanks" compressed="true">o1.glade</file>
+		<file>style.css</file>
+	</gresource>
+</gresources>
