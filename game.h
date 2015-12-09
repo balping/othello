@@ -31,6 +31,9 @@
  *
  * 		game-end:			vége a játéknak
  * 							params: t_game * game
+ *
+ * 		game-allas-changed:	megváltozott a játék állása
+ * 							params: t_game * game
  */
 void initSignals();
 
@@ -39,14 +42,14 @@ void initSignals();
  *
  * Ezt alkalmazzuk rajzoláskor is a mezo_buffers indexeként
  */
-typedef enum { MEZO_URES = 0, MEZO_FEHER = 1, MEZO_FEKETE = 2, MEZO_KATTINTHATO = 3} t_mezo;
+typedef enum { MEZO_FEHER = 0, MEZO_FEKETE = 1, MEZO_URES = 2,  MEZO_KATTINTHATO = 3} t_mezo;
 
 /**
  * Játékos típusa.
  *
  * Leginkább a soron következő játékos nyilvántartásánál használatos
  */
-typedef enum { FEHER = 1, FEKETE = 2 } t_player;
+typedef enum { FEHER = 0, FEKETE = 1 } t_player;
 
 /**
  * Egész játékállapotot nyilvántartó struktúra
@@ -54,6 +57,8 @@ typedef enum { FEHER = 1, FEKETE = 2 } t_player;
 typedef struct {
 	t_mezo table[8][8]; //játéktábla
 	t_player next; //soronkövetkező játékos
+	char count_feher;
+	char count_fekete;
 } t_game;
 
 
@@ -81,6 +86,13 @@ bool lehetosegSzamol(t_game *game);
  * @param [char *] kurzor	amelyik mezőre az új korongot helyezzük. 2 elemű tömb
  */
 void lep(t_game *game, char *kurzor, GObject *communicator);
+
+/**
+ * Összeszámolja, hogy hány fehér ill. fekete korong van a táblán
+ *
+ * Az eredményt a game változóba menti.
+ */
+void allasSzamol(t_game *game, GObject *communicator );
 
 
 #endif //OTHELLO_GAME_H

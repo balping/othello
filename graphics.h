@@ -23,7 +23,7 @@ GdkPixbuf * mezo_buffers[4];
  * Következő játékos, illetve állás kijelzésénél.
  * Szintén indokoltan globális
  */
-GdkPixbuf * kicsi_buffers[3];
+GdkPixbuf * kicsi_buffers[2];
 
 
 
@@ -61,4 +61,11 @@ void refreshNextPlayer(GtkImage *korongImage, t_player *next);
  * Értesítés megjelenítése, miszerint ugyanaz a játékos jön mégegyszer
  */
 void dialogUjrajon(GtkWindow *window, t_player *player);
+
+/**
+ * Értesítés megjelenítése, miszerint végetért a játék
+ *
+ * Kiírja a győztest
+ */
+void dialogGameOver(GtkWindow *window, t_game *game);
 #endif //OTHELLO_GLADE_GRAPHICS_H

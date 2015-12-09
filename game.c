@@ -24,6 +24,7 @@ void newGame(t_game *game, GObject *communicator){
 	game->next = FEKETE;
 
 	lehetosegSzamol(game);
+	allasSzamol(game, communicator);
 
 	//refreshGrid meghívása
 	g_signal_emit_by_name(communicator, "game-table-changed", game->table);
@@ -143,6 +144,7 @@ void lep(t_game *game, char *kurzor, GObject *communicator){
 		}
 		}
 
+		allasSzamol(game, communicator);
 
 		game->next = other_jatekos;
 
@@ -159,7 +161,10 @@ void lep(t_game *game, char *kurzor, GObject *communicator){
 
 				return;
 			}else{
+				g_signal_emit_by_name(communicator, "game-table-changed", game->table);
 				g_signal_emit_by_name(communicator, "game-end", game);
+
+				return;
 			}
 		}
 
@@ -170,6 +175,29 @@ void lep(t_game *game, char *kurzor, GObject *communicator){
 		g_signal_emit_by_name(communicator, "game-next-player-changed", &game->next);
 	}
 }
+
+void allasSzamol(t_game *game, GObject *communicator){
+	char x,y;
+
+	char c_feher = 0;  //fehérek száma
+	char c_fekete = 0; //feketék száma
+
+	for(x=0;x<8;x++){
+	for(y=0;y<8;y++){
+		if(game->table[x][y] == MEZO_FEHER){
+			c_feher++;
+		}else if(game->table[x][y] == MEZO_FEKETE){
+			c_fekete++;
+		}
+	}
+	}
+
+	game->count_feher = c_feher;
+	game->count_fekete = c_fekete;
+
+	g_signal_emit_by_name(communicator, "game-allas-changed", game);
+}
+
 
 
 void initSignals(){
@@ -208,4 +236,11 @@ void initSignals(){
 				 0, NULL, NULL,
 				 g_cclosure_marshal_VOID__BOXED,
 				 G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+	g_signal_new("game-allas-changed",
+				 G_TYPE_OBJECT, G_SIGNAL_RUN_FIRST,
+				 0, NULL, NULL,
+				 g_cclosure_marshal_VOID__BOXED,
+				 G_TYPE_NONE, 1, G_TYPE_POINTER);
 }
+

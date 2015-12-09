@@ -3,6 +3,7 @@
 
 #include "othello.h"
 #include "graphics.h"
+#include "game.h"
 
 
 void initGrid(GtkGrid *grid){
@@ -112,6 +113,26 @@ void dialogUjrajon(GtkWindow *window, t_player *player){
 									 GTK_MESSAGE_INFO,
 									 GTK_BUTTONS_OK,
 									 *player == FEHER ? "Újra a fehér következik." : "Újra a fekete következik.");
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+}
+
+void dialogGameOver(GtkWindow *window, t_game *game){
+	char *message;
+	if(game->count_feher > game->count_fekete){
+		message = "Fehér nyert.";
+	}else if(game->count_feher < game->count_fekete){
+		message = "Fekete nyert";
+	}else{
+		message = "Döntetlen";
+	}
+
+	GtkWidget *dialog;
+	dialog = gtk_message_dialog_new(NULL,
+									GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+									GTK_MESSAGE_INFO,
+									GTK_BUTTONS_OK,
+									message);
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
 }

@@ -73,6 +73,7 @@ void bind_communicator(GObject * communicator, GtkGrid * grid){
 	g_signal_connect_swapped(communicator, "user-new-game", G_CALLBACK(newGame), game);
 	g_signal_connect_swapped(communicator, "user-new-move", G_CALLBACK(lep), game);
 	g_signal_connect_swapped(communicator, "game-player-onceagain", G_CALLBACK(dialogUjrajon), gtk_widget_get_window(GTK_WIDGET(communicator)));
+	g_signal_connect_swapped(communicator, "game-end", G_CALLBACK(dialogGameOver), gtk_widget_get_window(GTK_WIDGET(communicator)));
 }
 
 //soronkövetkező játékos frissítése
