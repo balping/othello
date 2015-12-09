@@ -68,4 +68,48 @@ void dialogUjrajon(GtkWindow *window, t_player *player);
  * Kiírja a győztest
  */
 void dialogGameOver(GtkWindow *window, t_game *game);
+
+/**
+ * Help -> about menüből megnyíló ablak
+ */
+void show_about();
+
+/**
+ * Kirajzolja a két korongot az állásjelzőn
+ */
+void initAllas(GtkGrid * allasGrid);
+
+/**
+ * Állapotjelzőt frissíti
+ */
+void refreshAllas(GtkGrid * allasGrid, t_game *game);
+
+/**
+ * Megjeleníti az állapotjelzőt
+ */
+void showInfobox(GtkBox * infobox);
+
+/**
+ * Elrejti az állapotjelzőt
+ */
+void hideInfobox(GtkBox * infobox);
+
+/**
+ * Megjeleníti a következő játékos kiírást
+ */
+void showNextbox(GtkBox * nextbox);
+
+/**
+ * Elrejti a következő játékos kiírást
+ */
+void hideNextbox(GtkBox * nextbox);
+
+
+/**
+ * Beállítja a játéktábla rácsát
+ */
+void init_css();
+
+
+
 #endif //OTHELLO_GLADE_GRAPHICS_H

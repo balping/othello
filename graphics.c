@@ -136,3 +136,74 @@ void dialogGameOver(GtkWindow *window, t_game *game){
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
 }
+
+void show_about(){
+	gtk_show_about_dialog (NULL,
+						   "program-name", "Othello",
+						   "version", "v0.0.1",
+						   "comments", "GTK+-on alapuló\nklasszikus Othello játék",
+						   "copyright", "Kovács Balázs Marcell, 2015",
+						   "license-type", GTK_LICENSE_MIT_X11,
+
+						   "icon", gdk_pixbuf_new_from_resource("/othello/icon.png", NULL),
+
+						   NULL);
+}
+
+void initAllas(GtkGrid *allasGrid){
+	GtkWidget * feherkorong = gtk_image_new_from_pixbuf(kicsi_buffers[FEHER]);
+	GtkWidget * feketekorong = gtk_image_new_from_pixbuf(kicsi_buffers[FEKETE]);
+
+	gtk_grid_attach(allasGrid, feherkorong, 0, 0, 1, 1);
+	gtk_grid_attach(allasGrid, feketekorong, 1, 0, 1, 1);
+
+	gtk_widget_show(feherkorong);
+	gtk_widget_show(feketekorong);
+}
+
+void refreshAllas(GtkGrid *allasGrid, t_game *game){
+	GtkLabel * feherlabel = GTK_LABEL(gtk_grid_get_child_at(allasGrid, 0, 1));
+	GtkLabel * feketelabel = GTK_LABEL(gtk_grid_get_child_at(allasGrid, 1, 1));
+
+	//szám szöveggé
+	gchar *feherText =  g_strdup_printf("%d", (int)game->count_feher);
+	gchar *feketeText =  g_strdup_printf("%d", (int)game->count_fekete);
+
+	gtk_label_set_text(feherlabel, feherText);
+	gtk_label_set_text(feketelabel, feketeText);
+}
+
+void showInfobox(GtkBox * infobox){
+	gtk_widget_set_visible(GTK_WIDGET(infobox), true);
+}
+
+void hideInfobox(GtkBox *infobox){
+	gtk_widget_set_visible(GTK_WIDGET(infobox), false);
+}
+
+void showNextbox(GtkBox *nextbox){
+	gtk_widget_set_visible(GTK_WIDGET(nextbox), true);
+}
+
+void hideNextbox(GtkBox *nextbox){
+	gtk_widget_set_visible(GTK_WIDGET(nextbox), false);
+}
+
+void init_css(){
+//http://www.gtkforums.com/viewtopic.php?f=3&t=988&p=72088=GTK3+with+CSS#p72088
+	GtkCssProvider * provider = gtk_css_provider_new();
+	GdkDisplay *display = gdk_display_get_default ();
+	GdkScreen *screen = gdk_display_get_default_screen (display);
+
+
+	//gtk_css_provider_load_from_resource (provider, "/othello/style.css"); //ehhez nem elég friss a gtk verzióm
+
+	GBytes * cssBuffer = g_resources_lookup_data("/othello/style.css", G_RESOURCE_LOOKUP_FLAGS_NONE, NULL);
+	gtk_css_provider_load_from_data(provider, g_bytes_get_data(cssBuffer, NULL), -1, NULL);
+
+	gtk_style_context_add_provider_for_screen (screen, GTK_STYLE_PROVIDER (provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+	g_object_unref (provider);
+}
+
+

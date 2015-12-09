@@ -37,6 +37,7 @@
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_button_new_game_clicked" object="window1" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -408,18 +409,20 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="box3">
+                  <object class="GtkBox" id="infobox">
                     <property name="width_request">270</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
                     <property name="spacing">20</property>
+                    <signal name="realize" handler="bind_infobox" object="window1" swapped="no"/>
                     <child>
-                      <object class="GtkBox" id="box4">
+                      <object class="GtkBox" id="nextbox">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">center</property>
                         <property name="spacing">10</property>
+                        <signal name="realize" handler="bind_nextbox" object="window1" swapped="no"/>
                         <child>
                           <object class="GtkLabel" id="label1">
                             <property name="visible">True</property>
@@ -469,6 +472,9 @@
                               <object class="GtkGrid" id="grid1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="column_spacing">10</property>
+                                <property name="column_homogeneous">True</property>
+                                <signal name="realize" handler="bind_allas_update" object="window1" swapped="no"/>
                                 <child>
                                   <object class="GtkLabel" id="fekete_allas">
                                     <property name="visible">True</property>

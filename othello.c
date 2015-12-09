@@ -62,7 +62,7 @@ void on_grid_realize(GtkGrid * grid){
 	initGrid(grid);
 }
 
-
+//glade hívja meg
 void bind_communicator(GObject * communicator, GtkGrid * grid){
 	//játék objektum létrehozása
 	//TODO: kilépéskor törlés
@@ -77,45 +77,40 @@ void bind_communicator(GObject * communicator, GtkGrid * grid){
 }
 
 //soronkövetkező játékos frissítése
+//glade hívja meg
 void bind_next_player(GtkImage * korongImage, GObject * communicator){
 	g_signal_connect_swapped(communicator, "game-next-player-changed", G_CALLBACK(refreshNextPlayer), korongImage);
 }
 
-void show_about(){
-	gtk_show_about_dialog (NULL,
-		"program-name", "Othello",
-		"version", "v0.0.1",
-		"comments", "GTK+-on alapuló\nklasszikus Othello játék",
-		"copyright", "Kovács Balázs Marcell, 2015",
-		"license-type", GTK_LICENSE_MIT_X11,
-
-		"icon", gdk_pixbuf_new_from_resource("/othello/icon.png", NULL),
-
-		NULL);
+//állapotjelsző frissítése
+//glade hívja meg
+void bind_allas_update(GtkGrid * allasGrid, GObject * communicator){
+	initAllas(allasGrid);
+	g_signal_connect_swapped(communicator, "game-allas-changed", G_CALLBACK(refreshAllas), allasGrid);
 }
 
-//http://www.gtkforums.com/viewtopic.php?f=3&t=988&p=72088=GTK3+with+CSS#p72088
-void init_css(){
-	GtkCssProvider * provider = gtk_css_provider_new();
-	GdkDisplay *display = gdk_display_get_default ();
-	GdkScreen *screen = gdk_display_get_default_screen (display);
+//állapotjelsző megjelenítése és elrejtése attól függően, hogy megy-e a játék
+//glade hívja meg
+void bind_infobox(GtkBox * infobox, GObject * communicator){
 
-
-	//gtk_css_provider_load_from_resource (provider, "/othello/style.css"); //ehhez nem elég friss a gtk verzióm
-	
-	GBytes * cssBuffer = g_resources_lookup_data("/othello/style.css", G_RESOURCE_LOOKUP_FLAGS_NONE, NULL);
-	gtk_css_provider_load_from_data(provider, g_bytes_get_data(cssBuffer, NULL), -1, NULL);
-
-	gtk_style_context_add_provider_for_screen (screen, GTK_STYLE_PROVIDER (provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
-	g_object_unref (provider);
+	g_signal_connect_swapped(communicator, "game-started", G_CALLBACK(showInfobox), infobox);
+	//g_signal_connect_swapped(communicator, "game-end", G_CALLBACK(hideInfobox), infobox);
+	hideInfobox(infobox);
 }
 
+//következő játékos megjelenítése és elrejtése attól függően, hogy megy-e a játék
+//glade hívja meg
+void bind_nextbox(GtkBox * nextbox, GObject * communicator){
+
+	//g_signal_connect_swapped(communicator, "game-started", G_CALLBACK(showNextbox), nextbox);
+	//g_signal_connect_swapped(communicator, "game-end", G_CALLBACK(hideNextbox), nextbox);
+	//hideNextbox(nextbox);
+}
 
 /**
  * Glade hívja meg. Egyetlen funkciója, hogy meghívja a new_game() fv-t
  */
-void on_button_new_game_clicked(GtkButton* button, GObject * communicator){
+void on_button_new_game_clicked(GtkWidget* button, GObject * communicator){
 	g_signal_emit_by_name(communicator, "user-new-game");
 
 }

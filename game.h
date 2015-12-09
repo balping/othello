@@ -18,6 +18,8 @@
  * 		user-new-game:		a felhasználó megnyomta az új játék gombot
  * 							params: t_game * game
  *
+ * 		game-started:		játék initializálva
+ *
  * 		user-new-move:		a felhasználó rákattintott egy mezőre
  * 							params: char * kurzor: a kattintott mező 2 koordinátája
  *
