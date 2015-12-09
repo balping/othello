@@ -74,6 +74,11 @@ void bind_communicator(GObject * communicator, GtkGrid * grid){
 	g_signal_connect_swapped(communicator, "user-new-move", G_CALLBACK(lep), game);
 }
 
+//soronkövetkező játékos frissítése
+void bind_next_player(GtkImage * korongImage, GObject * communicator){
+	g_signal_connect_swapped(communicator, "game-next-player-changed", G_CALLBACK(refreshNextPlayer), korongImage);
+}
+
 void show_about(){
 	gtk_show_about_dialog (NULL,
 		"program-name", "Othello",

@@ -20,6 +20,10 @@
  *
  * 		user-new-move:		a felhasználó rákattintott egy mezőre
  * 							params: char * kurzor: a kattintott mező 2 koordinátája
+ *
+ * 		game-next-player-changed:
+ * 							megváltozott a következő játékos
+ * 							params: t_player * next
  */
 void initSignals();
 

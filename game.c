@@ -26,6 +26,7 @@ void newGame(t_game *game, GObject *communicator){
 
 	//refreshGrid meghívása
 	g_signal_emit_by_name(communicator, "game-table-changed", game->table);
+	g_signal_emit_by_name(communicator, "game-next-player-changed", &game->next);
 
 }
 
@@ -147,6 +148,7 @@ void lep(t_game *game, char *kurzor, GObject *communicator){
 
 		//refreshGrid meghívása
 		g_signal_emit_by_name(communicator, "game-table-changed", game->table);
+		g_signal_emit_by_name(communicator, "game-next-player-changed", &game->next);
 	}
 }
 
@@ -165,6 +167,12 @@ void initSignals(){
 				 G_TYPE_NONE, 0);
 
 	g_signal_new("user-new-move",
+				 G_TYPE_OBJECT, G_SIGNAL_RUN_FIRST,
+				 0, NULL, NULL,
+				 g_cclosure_marshal_VOID__BOXED,
+				 G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+	g_signal_new("game-next-player-changed",
 				 G_TYPE_OBJECT, G_SIGNAL_RUN_FIRST,
 				 0, NULL, NULL,
 				 g_cclosure_marshal_VOID__BOXED,

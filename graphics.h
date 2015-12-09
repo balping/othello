@@ -44,4 +44,9 @@ void mezoClicked(GtkEventBox * eventBox, GdkEvent  *event, char * koord);
  */
 void refreshGrid(GtkGrid *grid, t_mezo table[8][8]);
 
+/**
+ * Következő játékos állapotjelzőt frissíti a képernyőn
+ */
+void refreshNextPlayer(GtkImage *korongImage, t_player *next);
+
 #endif //OTHELLO_GLADE_GRAPHICS_H

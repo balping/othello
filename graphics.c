@@ -97,3 +97,7 @@ void refreshGrid(GtkGrid *grid, t_mezo table[8][8]){
 	}
 	}
 }
+
+void refreshNextPlayer(GtkImage *korongImage, t_player *next){
+	gtk_image_set_from_pixbuf(korongImage, mezo_buffers[ (t_mezo) *next ]);
+}
