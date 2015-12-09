@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "game.h"
+#include "graphics.h"
 
 
 void newGame(t_game *game, GObject *communicator){
@@ -144,7 +145,25 @@ void lep(t_game *game, char *kurzor, GObject *communicator){
 
 
 		game->next = other_jatekos;
-		lehetosegSzamol(game);
+
+		//ha nics érvényes lépés, u.a. a játékos jön
+		bool lehetelepni = lehetosegSzamol(game);
+		if(!lehetelepni){
+			game->next = jatekos;
+
+
+			lehetelepni = lehetosegSzamol(game);
+			if(lehetelepni){
+				g_signal_emit_by_name(communicator, "game-table-changed", game->table);
+				g_signal_emit_by_name(communicator, "game-player-onceagain", &jatekos);
+
+				return;
+			}else{
+				g_signal_emit_by_name(communicator, "game-end", game);
+			}
+		}
+
+
 
 		//refreshGrid meghívása
 		g_signal_emit_by_name(communicator, "game-table-changed", game->table);
@@ -173,6 +192,18 @@ void initSignals(){
 				 G_TYPE_NONE, 1, G_TYPE_POINTER);
 
 	g_signal_new("game-next-player-changed",
+				 G_TYPE_OBJECT, G_SIGNAL_RUN_FIRST,
+				 0, NULL, NULL,
+				 g_cclosure_marshal_VOID__BOXED,
+				 G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+	g_signal_new("game-player-onceagain",
+				 G_TYPE_OBJECT, G_SIGNAL_RUN_FIRST,
+				 0, NULL, NULL,
+				 g_cclosure_marshal_VOID__BOXED,
+				 G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+	g_signal_new("game-end",
 				 G_TYPE_OBJECT, G_SIGNAL_RUN_FIRST,
 				 0, NULL, NULL,
 				 g_cclosure_marshal_VOID__BOXED,

@@ -101,3 +101,14 @@ void refreshGrid(GtkGrid *grid, t_mezo table[8][8]){
 void refreshNextPlayer(GtkImage *korongImage, t_player *next){
 	gtk_image_set_from_pixbuf(korongImage, mezo_buffers[ (t_mezo) *next ]);
 }
+
+void dialogUjrajon(GtkWindow *window, t_player *player){
+	GtkWidget *dialog;
+	dialog = gtk_message_dialog_new(NULL,
+									 GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+									 GTK_MESSAGE_INFO,
+									 GTK_BUTTONS_OK,
+									 *player == FEHER ? "Újra a fehér következik." : "Újra a fekete következik.");
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+}

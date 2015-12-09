@@ -24,6 +24,13 @@
  * 		game-next-player-changed:
  * 							megváltozott a következő játékos
  * 							params: t_player * next
+ *
+ * 		game-player-onceagain:
+ * 							játékos újrajön
+ * 							params: t_player * player
+ *
+ * 		game-end:			vége a játéknak
+ * 							params: t_game * game
  */
 void initSignals();
 
@@ -74,5 +81,6 @@ bool lehetosegSzamol(t_game *game);
  * @param [char *] kurzor	amelyik mezőre az új korongot helyezzük. 2 elemű tömb
  */
 void lep(t_game *game, char *kurzor, GObject *communicator);
+
 
 #endif //OTHELLO_GAME_H

@@ -49,4 +49,8 @@ void refreshGrid(GtkGrid *grid, t_mezo table[8][8]);
  */
 void refreshNextPlayer(GtkImage *korongImage, t_player *next);
 
+/**
+ * Értesítés megjelenítése, miszerint ugyanaz a játékos jön mégegyszer
+ */
+void dialogUjrajon(GtkWindow *window, t_player *player);
 #endif //OTHELLO_GLADE_GRAPHICS_H
