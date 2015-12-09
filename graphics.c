@@ -140,7 +140,7 @@ void dialogGameOver(GtkWindow *window, t_game *game){
 void show_about(){
 	gtk_show_about_dialog (NULL,
 						   "program-name", "Othello",
-						   "version", "v0.0.1",
+						   "version", "v0.0.2",
 						   "comments", "GTK+-on alapuló\nklasszikus Othello játék",
 						   "copyright", "Kovács Balázs Marcell, 2015",
 						   "license-type", GTK_LICENSE_MIT_X11,
