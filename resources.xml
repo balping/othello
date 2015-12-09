@@ -5,6 +5,8 @@
 		<file>fekete.png</file>
 		<file>ures.png</file>
 		<file>kattinthato.png</file>
+		<file>feher_kicsi.png</file>
+		<file>fekete_kicsi.png</file>
 		<file>icon.png</file>
 		<file preprocess="xml-stripblanks" compressed="true">o1.glade</file>
 		<file>style.css</file>

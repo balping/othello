@@ -17,6 +17,14 @@
  */
 GdkPixbuf * mezo_buffers[4];
 
+/**
+ * Fehér ill. fekete kis méretű korongok képei
+ *
+ * Következő játékos, illetve állás kijelzésénél.
+ * Szintén indokoltan globális
+ */
+GdkPixbuf * kicsi_buffers[3];
+
 
 
 /*

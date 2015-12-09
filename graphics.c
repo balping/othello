@@ -55,6 +55,9 @@ void initBuffers(){
 	mezo_buffers[MEZO_FEHER] = gdk_pixbuf_new_from_resource("/othello/feher.png", NULL);
 	mezo_buffers[MEZO_FEKETE] = gdk_pixbuf_new_from_resource("/othello/fekete.png", NULL);
 	mezo_buffers[MEZO_KATTINTHATO] = gdk_pixbuf_new_from_resource("/othello/kattinthato.png", NULL);
+
+	kicsi_buffers[FEHER] = gdk_pixbuf_new_from_resource("/othello/feher_kicsi.png", NULL);
+	kicsi_buffers[FEKETE] = gdk_pixbuf_new_from_resource("/othello/fekete_kicsi.png", NULL);
 }
 
 void changeMezo(GtkGrid *grid, char x, char y, t_mezo mire){
@@ -99,7 +102,7 @@ void refreshGrid(GtkGrid *grid, t_mezo table[8][8]){
 }
 
 void refreshNextPlayer(GtkImage *korongImage, t_player *next){
-	gtk_image_set_from_pixbuf(korongImage, mezo_buffers[ (t_mezo) *next ]);
+	gtk_image_set_from_pixbuf(korongImage, kicsi_buffers[ (t_mezo) *next ]);
 }
 
 void dialogUjrajon(GtkWindow *window, t_player *player){
