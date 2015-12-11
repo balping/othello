@@ -21,7 +21,10 @@
  * 		game-started:		játék initializálva
  *
  * 		user-new-move:		a felhasználó rákattintott egy mezőre
- * 							params: char * kurzor: a kattintott mező 2 koordinátája
+ * 							params: t_kurzor * kurzor: a kattintott mező 2 koordinátája
+ *
+ * 		game-move-done:		lépés történt
+ * 							params: t_game * game
  *
  * 		game-next-player-changed:
  * 							megváltozott a következő játékos
@@ -36,6 +39,14 @@
  *
  * 		game-allas-changed:	megváltozott a játék állása
  * 							params: t_game * game
+ *
+ * 		user-ai-fekete-changed:
+ * 							átböggyintették a fekete ai kapcsolót
+ * 							params: gbool allapot
+ *
+ * 		user-ai-feher-changed:
+ * 							átböggyintették a fehér ai kapcsolót
+ * 							params: gboolean allapot
  */
 void initSignals();
 
@@ -62,8 +73,7 @@ typedef struct {
 	char count_feher;
 	char count_fekete;
 
-	bool ai_feher; //adott játkos automata-e
-	bool ai_fekete;
+	bool ai[2]; //adott játkos automata-e
 } t_game;
 
 /**
@@ -118,7 +128,10 @@ void allasSzamol(t_game *game, GObject *communicator );
  */
 t_kurzor ai_legjobbMezo(t_game * game);
 
-void ai_lep(t_game * game, t_kurzor kurzor);
+void ai_lep(GObject *communicator, t_game *game);
+
+void changeAiFeher(t_game * game, gboolean allapot);
+void changeAiFekete(t_game * game, gboolean allapot);
 
 
 #endif //OTHELLO_GAME_H

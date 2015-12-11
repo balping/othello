@@ -23,8 +23,8 @@ void newGame(t_game *game, GObject *communicator){
 	//mindig a fekete kezd
 	game->next = FEKETE;
 
-	game->ai_feher = false;
-	game->ai_fekete = true;
+	game->ai[FEHER] = false;
+	game->ai[FEKETE] = false;
 
 	lehetosegSzamol(game);
 	allasSzamol(game, communicator);
@@ -33,6 +33,7 @@ void newGame(t_game *game, GObject *communicator){
 	g_signal_emit_by_name(communicator, "game-started");
 	g_signal_emit_by_name(communicator, "game-table-changed", game->table);
 	g_signal_emit_by_name(communicator, "game-next-player-changed", &game->next);
+	g_signal_emit_by_name(communicator, "game-move-done", game);
 
 }
 
@@ -110,6 +111,7 @@ void lep(t_game *game, t_kurzor * kurzor, GObject *communicator){
 	t_player jatekos = game->next;
 	t_player other_jatekos = otherPlayer(jatekos);
 
+
 	if(game->table[kurzor->x][kurzor->y] == MEZO_KATTINTHATO){
 		game->table[kurzor->x][kurzor->y] = (t_mezo) jatekos;
 		signed char xx, yy;
@@ -165,7 +167,7 @@ void lep(t_game *game, t_kurzor * kurzor, GObject *communicator){
 			if(lehetelepni){
 				g_signal_emit_by_name(communicator, "game-table-changed", game->table);
 				g_signal_emit_by_name(communicator, "game-player-onceagain", &jatekos);
-				g_signal_emit_by_name(communicator, "game-lepett", game);
+				g_signal_emit_by_name(communicator, "game-move-done", game);
 
 				return;
 			}else{
@@ -178,9 +180,11 @@ void lep(t_game *game, t_kurzor * kurzor, GObject *communicator){
 
 
 
+
 		//refreshGrid meghívása
 		g_signal_emit_by_name(communicator, "game-table-changed", game->table);
 		g_signal_emit_by_name(communicator, "game-next-player-changed", &game->next);
+		g_signal_emit_by_name(communicator, "game-move-done", game);
 	}
 }
 
@@ -255,6 +259,23 @@ t_kurzor ai_legjobbMezo(t_game *game){
 }
 
 
+void ai_lep(GObject *communicator, t_game *game){
+	//csak akkor lép az ai, ha a beállítás úgy kívánja
+	if(game->ai[game->next]){
+		t_kurzor kurzor = ai_legjobbMezo(game);
+		lep(game, &kurzor, communicator);
+	}
+
+}
+
+void changeAiFeher(t_game *game, gboolean allapot){
+	game->ai[FEHER] = (bool)allapot;
+}
+
+void changeAiFekete(t_game *game, gboolean allapot){
+	game->ai[FEKETE] = (bool)allapot;
+}
+
 
 void initSignals(){
 	g_signal_new("game-table-changed",
@@ -276,6 +297,12 @@ void initSignals(){
 				 G_TYPE_NONE, 0);
 
 	g_signal_new("user-new-move",
+				 G_TYPE_OBJECT, G_SIGNAL_RUN_FIRST,
+				 0, NULL, NULL,
+				 g_cclosure_marshal_VOID__BOXED,
+				 G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+	g_signal_new("game-move-done",
 				 G_TYPE_OBJECT, G_SIGNAL_RUN_FIRST,
 				 0, NULL, NULL,
 				 g_cclosure_marshal_VOID__BOXED,
@@ -304,6 +331,18 @@ void initSignals(){
 				 0, NULL, NULL,
 				 g_cclosure_marshal_VOID__BOXED,
 				 G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+	g_signal_new("user-ai-fekete-changed",
+				 G_TYPE_OBJECT, G_SIGNAL_RUN_FIRST,
+				 0, NULL, NULL,
+				 g_cclosure_marshal_VOID__BOXED,
+				 G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
+
+	g_signal_new("user-ai-feher-changed",
+				 G_TYPE_OBJECT, G_SIGNAL_RUN_FIRST,
+				 0, NULL, NULL,
+				 g_cclosure_marshal_VOID__BOXED,
+				 G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
 }
 
 
