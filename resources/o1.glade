@@ -73,7 +73,18 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem10">
+                      <object class="GtkImageMenuItem" id="menu_help">
+                        <property name="label">gtk-dialog-info</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <signal name="activate" handler="show_help" object="window2" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem2">
                         <property name="label">gtk-about</property>
                         <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
@@ -368,6 +379,74 @@
                 <property name="position">1</property>
               </packing>
             </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="window2">
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkBox" id="box3">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkLabel" id="label5">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Othello
+
+GTK+-ra épülő klasszikus Othello játék.
+
+Forráskód a Github-on elérhető.
+Játékszabály
+
+A játékot két játékos játssza, az egyik a fehér, a másik a fekete. A játékosok felváltva jönnek. Egy lépésben a soron következő játékos 1 db. korongot helyez a tábla egy üres mezejére úgy, hogy legalább egy ellenséges korongot átfordítson a következőek szerint:
+
+    az újonnan lerakott korong és egy, már a táblán levő saját színű korong közrefog ellenséges korongokat
+    a közrefogás mind a 8 irányba értelmezendő
+    az összes közrefogott ellenséges korong átfordul
+
+Ha a soron következő játékos nem tud rakni a fentiek szerint, akkor az ellenfél következik.
+
+Ha egyik játékos sem tud rakni (vagy ha a tábla betelik), a játék véget ér.
+
+A győztes, akinek a játék végén több korongja van a táblán.
+Használat
+
+Egér segítségével kiválaszthatjuk, hogy hova szeretnénk rakni. A program világosabb színnel jelzi a lehetséges mezőket.
+
+A soron következő játékost a program a jobb felső sarokban kijelzi az aktuális állással együtt.
+
+Játékot az Új játék gomb megnyomásával lehet indítani.
+
+A program tartalmaz egy beépített automata ellenfelet, ezt a játék során bármikor ki- és bekapcsolhatjuk.</property>
+            <property name="wrap">True</property>
+            <property name="ellipsize">start</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button1">
+            <property name="label">gtk-close</property>
+            <property name="use_action_appearance">False</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="use_action_appearance">False</property>
+            <property name="use_stock">True</property>
+            <property name="image_position">right</property>
+            <signal name="clicked" handler="hide_help" object="window2" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>

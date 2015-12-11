@@ -94,6 +94,8 @@ int main(int argc, char *argv[]){
 	g_signal_connect(gtk_builder_get_object(builder, "black_ai"), "notify::active", G_CALLBACK(ai_fekete_switched), cg);
 
 
+
+
 	g_object_unref(builder);
 
 	gtk_widget_show(window);
@@ -106,6 +108,20 @@ int main(int argc, char *argv[]){
 
 	return 0;
 }
+
+void show_help(GtkImageMenuItem * menu, GtkWindow * helpwindow){
+	gtk_window_set_icon(helpwindow, gdk_pixbuf_new_from_resource("/othello/icon.png", NULL));
+	gtk_window_set_deletable(helpwindow, false);
+	gtk_window_set_resizable(helpwindow, false);
+	gtk_widget_show(GTK_WIDGET( helpwindow));
+}
+
+void hide_help(GtkButton * button, GtkWindow * helpwindow){
+	gtk_widget_hide(GTK_WIDGET(helpwindow));
+}
+
+
+
 
 
 void on_grid_realize(GtkGrid * grid){
