@@ -23,6 +23,9 @@ void newGame(t_game *game, GObject *communicator){
 	//mindig a fekete kezd
 	game->next = FEKETE;
 
+	game->ai_feher = false;
+	game->ai_fekete = true;
+
 	lehetosegSzamol(game);
 	allasSzamol(game, communicator);
 
@@ -42,12 +45,12 @@ t_player otherPlayer(t_player player){
 	}
 }
 
-int lehetosegSzamol(t_game *game){
+char lehetosegSzamol(t_game *game){
 	char x, y;
 	bool lehete;
 	signed char xx, yy;
 	signed char dx, dy;
-	int n_kattinthato = 0; //hány megjátszható mező van a táblán
+	char n_kattinthato = 0; //hány megjátszható mező van a táblán
 
 	t_player jatekos = game->next;
 	t_player other_jatekos = otherPlayer(jatekos);
@@ -103,21 +106,18 @@ int lehetosegSzamol(t_game *game){
 }
 
 
-void lep(t_game *game, char *kurzor, GObject *communicator){
-	char kurzorx = kurzor[0];
-	char kurzory = kurzor[1];
-
+void lep(t_game *game, t_kurzor * kurzor, GObject *communicator){
 	t_player jatekos = game->next;
 	t_player other_jatekos = otherPlayer(jatekos);
 
-	if(game->table[kurzorx][kurzory] == MEZO_KATTINTHATO){
-		game->table[kurzorx][kurzory] = (t_mezo) jatekos;
+	if(game->table[kurzor->x][kurzor->y] == MEZO_KATTINTHATO){
+		game->table[kurzor->x][kurzor->y] = (t_mezo) jatekos;
 		signed char xx, yy;
 		signed char dx, dy;
 		bool lehete;
 		char x, y;
-		x = kurzorx;
-		y = kurzory;
+		x = kurzor->x;
+		y = kurzor->y;
 
 		//szérózsa minden irányába megyünk
 		for(dx = -1; dx <= 1; dx++){
@@ -145,9 +145,15 @@ void lep(t_game *game, char *kurzor, GObject *communicator){
 		}
 		}
 
-		allasSzamol(game, communicator);
 
 		game->next = other_jatekos;
+
+		//csak az ai hívta meg, nem valódi lépés
+		if(communicator == NULL){
+			return;
+		}
+
+		allasSzamol(game, communicator);
 
 		//ha nics érvényes lépés, u.a. a játékos jön
 		bool lehetelepni = lehetosegSzamol(game);
@@ -159,6 +165,7 @@ void lep(t_game *game, char *kurzor, GObject *communicator){
 			if(lehetelepni){
 				g_signal_emit_by_name(communicator, "game-table-changed", game->table);
 				g_signal_emit_by_name(communicator, "game-player-onceagain", &jatekos);
+				g_signal_emit_by_name(communicator, "game-lepett", game);
 
 				return;
 			}else{
@@ -197,6 +204,54 @@ void allasSzamol(t_game *game, GObject *communicator){
 	game->count_fekete = c_fekete;
 
 	g_signal_emit_by_name(communicator, "game-allas-changed", game);
+}
+
+t_kurzor ai_legjobbMezo(t_game *game){
+
+	//legjobb mező
+	struct {
+		t_kurzor kurzor;
+		char score;
+	} best;
+
+	//elméletileg max 64 lépés lehetséges (erősen felülbecsülve!)
+	//mivel minimumot keresünk, mindenképp lesz mi inicializálja
+	//a best.x, best.y változókat
+	best.score = 100;
+
+	t_game proba_allas;
+	char score_tmp;
+	t_kurzor kurzor;
+
+	//végig lépdelünk az összes kattintható mezőn
+	//és  kiszámoljuk minden esetben, hogy az ellenfélnek
+	//hány legális lépése lenne. Minimumra törekszünk
+	for(kurzor.x=0; kurzor.x<8; kurzor.x++){
+	for(kurzor.y=0; kurzor.y<8; kurzor.y++){
+		if(game->table[kurzor.x][kurzor.y] == MEZO_KATTINTHATO){
+			//lemásoljuk a játékállapotot
+
+			proba_allas = *game;
+
+			//megcsináljuk a próbalépést
+			lep(&proba_allas, &kurzor, NULL);
+
+			//megszámoljuk az ellenfél hányat tudna lépni
+			score_tmp = lehetosegSzamol(&proba_allas);
+
+			//minimumot keresünk
+			if(score_tmp < best.score){
+				best.kurzor.x = kurzor.x;
+				best.kurzor.y = kurzor.y;
+				best.score = score_tmp;
+			}
+
+		}
+	}
+	}
+
+	//visszatérés
+	return best.kurzor;
 }
 
 
@@ -250,4 +305,5 @@ void initSignals(){
 				 g_cclosure_marshal_VOID__BOXED,
 				 G_TYPE_NONE, 1, G_TYPE_POINTER);
 }
+
 

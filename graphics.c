@@ -90,7 +90,8 @@ void mezoClicked(GtkEventBox * eventBox, GdkEvent  *event, char * koord){
 	//communicator lekérése
 	GObject * communicator = G_OBJECT(gtk_widget_get_toplevel(GTK_WIDGET(eventBox)));
 
-	g_signal_emit_by_name(communicator, "user-new-move", koord);
+	t_kurzor kurzor = {koord[0], koord[1]};
+	g_signal_emit_by_name(communicator, "user-new-move", &kurzor);
 }
 
 void refreshGrid(GtkGrid *grid, t_mezo table[8][8]){

@@ -61,8 +61,20 @@ typedef struct {
 	t_player next; //soronkövetkező játékos
 	char count_feher;
 	char count_fekete;
+
+	bool ai_feher; //adott játkos automata-e
+	bool ai_fekete;
 } t_game;
 
+/**
+ * A lep() és az őt meghívó fv-ek használják
+ *
+ * A tábla egy mezőjének koordinátái
+ */
+typedef struct {
+	char x;
+	char y;
+} t_kurzor;
 
 /**
  * Játék inicializálása
@@ -80,14 +92,16 @@ t_player otherPlayer(t_player player);
  *
  * Visszatérés: hány megjátszható mező van a táblán
  */
-int lehetosegSzamol(t_game *game);
+char lehetosegSzamol(t_game *game);
 
 /**
  * Megcsinálja a lépést, átfordítja a korongokat
  *
- * @param [char *] kurzor	amelyik mezőre az új korongot helyezzük. 2 elemű tömb
+ * @param [t_kurzor] kurzor	amelyik mezőre az új korongot helyezzük. 2 elemű tömb
+ * @param [GObject *] communicator	Ezen keresztül adja ki a signalokat. Ha NULL, akkor nem valódi a lépés, csak az ai számításaiohz kell
+ *
  */
-void lep(t_game *game, char *kurzor, GObject *communicator);
+void lep(t_game *game, t_kurzor * kurzor, GObject *communicator);
 
 /**
  * Összeszámolja, hogy hány fehér ill. fekete korong van a táblán
@@ -95,6 +109,16 @@ void lep(t_game *game, char *kurzor, GObject *communicator);
  * Az eredményt a game változóba menti.
  */
 void allasSzamol(t_game *game, GObject *communicator );
+
+/**
+ * Melyik mezőre lépjen az automata
+ *
+ * @param [t_game *]	game	jelenlegi állás
+ * @return [t_kurzor]		kurzor		a meglépendő mező koordinátái (visszatérés)
+ */
+t_kurzor ai_legjobbMezo(t_game * game);
+
+void ai_lep(t_game * game, t_kurzor kurzor);
 
 
 #endif //OTHELLO_GAME_H
