@@ -104,6 +104,15 @@ void showNextbox(GtkBox * nextbox);
  */
 void hideNextbox(GtkBox * nextbox);
 
+/**
+ * Megjeleníti a helpet egy külön ablakban
+ */
+void show_help(GtkImageMenuItem * menu, GtkWindow * helpwindow);
+
+/**
+ * Bezárja a help ablakot
+ */
+void hide_help(GtkButton * button, GtkWindow * helpwindow);
 
 /**
  * Beállítja a játéktábla rácsát

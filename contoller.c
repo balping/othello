@@ -109,16 +109,6 @@ int main(int argc, char *argv[]){
 	return 0;
 }
 
-void show_help(GtkImageMenuItem * menu, GtkWindow * helpwindow){
-	gtk_window_set_icon(helpwindow, gdk_pixbuf_new_from_resource("/othello/icon.png", NULL));
-	gtk_window_set_deletable(helpwindow, false);
-	gtk_window_set_resizable(helpwindow, false);
-	gtk_widget_show(GTK_WIDGET( helpwindow));
-}
-
-void hide_help(GtkButton * button, GtkWindow * helpwindow){
-	gtk_widget_hide(GTK_WIDGET(helpwindow));
-}
 
 
 

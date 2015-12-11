@@ -141,7 +141,7 @@ void dialogGameOver(GtkWindow *window, t_game *game){
 void show_about(){
 	gtk_show_about_dialog (NULL,
 						   "program-name", "Othello",
-						   "version", "v0.0.2",
+						   "version", "v1.0.0",
 						   "comments", "GTK+-on alapuló\nklasszikus Othello játék",
 						   "copyright", "Kovács Balázs Marcell, 2015",
 						   "license-type", GTK_LICENSE_MIT_X11,
@@ -189,6 +189,19 @@ void showNextbox(GtkBox *nextbox){
 void hideNextbox(GtkBox *nextbox){
 	gtk_widget_set_visible(GTK_WIDGET(nextbox), false);
 }
+
+
+void show_help(GtkImageMenuItem * menu, GtkWindow * helpwindow){
+	gtk_window_set_icon(helpwindow, gdk_pixbuf_new_from_resource("/othello/icon.png", NULL));
+	gtk_window_set_deletable(helpwindow, false);
+	gtk_window_set_resizable(helpwindow, false);
+	gtk_widget_show(GTK_WIDGET( helpwindow));
+}
+
+void hide_help(GtkButton * button, GtkWindow * helpwindow){
+	gtk_widget_hide(GTK_WIDGET(helpwindow));
+}
+
 
 void init_css(){
 //http://www.gtkforums.com/viewtopic.php?f=3&t=988&p=72088=GTK3+with+CSS#p72088
