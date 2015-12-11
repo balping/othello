@@ -1,5 +1,6 @@
 #include <glib.h>
 #include <gtk/gtk.h>
+#include <stdlib.h>
 
 
 #include "othello.h"
@@ -10,7 +11,18 @@
 //http://prognotes.net/2015/06/gtk-3-c-program-using-glade-3/
 
 void init_css();
-void ai_feher_switched(GtkSwitch * feher_switch, GObject * communicator);
+
+void ai_feher_switched(GtkSwitch * feher_switch, void*nyel, void * cg[2]){
+	t_game * game = (t_game *) cg[1];
+	GObject * communicator = G_OBJECT(cg[0]);
+	changeAi(communicator,game,FEHER,(bool)gtk_switch_get_active(feher_switch));
+}
+
+void ai_fekete_switched(GtkSwitch * fekete_switch, void*nyel, void * cg[2]){
+	t_game * game = (t_game *) cg[1];
+	GObject * communicator = G_OBJECT(cg[0]);
+	changeAi(communicator,game,FEKETE,(bool)gtk_switch_get_active(fekete_switch));
+}
 
 
 int main(int argc, char *argv[]){
@@ -41,23 +53,51 @@ int main(int argc, char *argv[]){
 	//communicator-ként használjuk a fő window objektumot
 	GObject * communicator = G_OBJECT(window);
 	initSignals();
-	//g_signal_connect(communicator, "game-table-changed", gtk_main_quit, NULL);
 
-	//g_signal_connect(gtk_builder_get_object(builder, "white_ai"), "notify::active", G_CALLBACK(ai_feher_switched), communicator);
 
-	//bind
+
+	//signalok bindolása
+
+	//játék objektum létrehozása
 	t_game * game = g_malloc(sizeof(t_game));
-	g_signal_connect_swapped(communicator, "game-table-changed", G_CALLBACK(refreshGrid), gtk_builder_get_object(builder, "grid_game"));
+
+	g_signal_connect_swapped(communicator, "game-table-changed", G_CALLBACK(refreshGrid), GTK_GRID( gtk_builder_get_object(builder, "grid_game")));
 	g_signal_connect_swapped(communicator, "user-new-game", G_CALLBACK(newGame), game);
 	g_signal_connect_swapped(communicator, "user-new-move", G_CALLBACK(lep), game);
 	g_signal_connect(communicator, "game-move-done", G_CALLBACK(ai_lep), NULL);
 	g_signal_connect_swapped(communicator, "game-player-onceagain", G_CALLBACK(dialogUjrajon), gtk_widget_get_window(GTK_WIDGET(communicator)));
 	g_signal_connect_swapped(communicator, "game-end", G_CALLBACK(dialogGameOver), gtk_widget_get_window(GTK_WIDGET(communicator)));
 
-	g_signal_connect_swapped(communicator, "user-ai-fekete-changed", G_CALLBACK(changeAiFekete), game);
-	g_signal_connect_swapped(communicator, "user-ai-feher-changed", G_CALLBACK(changeAiFeher), game);
 
-	g_signal_connect_swapped(communicator, "game-next-player-changed", G_CALLBACK(refreshNextPlayer), korongImage);
+
+	//soronkövetkező játékos frissítése
+	g_signal_connect_swapped(communicator, "game-next-player-changed", G_CALLBACK(refreshNextPlayer), gtk_builder_get_object(builder, "image_next_player"));
+
+	//bufferek betöltése
+	initBuffers();
+
+	//állapotjelsző frissítése
+	GtkGrid * allasGrid = GTK_GRID(gtk_builder_get_object(builder, "allasgrid"));
+	initAllas(allasGrid);
+	g_signal_connect_swapped(communicator, "game-allas-changed", G_CALLBACK(refreshAllas), allasGrid);
+
+	//állapotjelsző megjelenítése és elrejtése attól függően, hogy megy-e a játék
+	GtkBox * infobox = GTK_BOX(gtk_builder_get_object(builder, "infobox"));
+	g_signal_connect_swapped(communicator, "game-started", G_CALLBACK(showInfobox), infobox);
+	//g_signal_connect_swapped(communicator, "game-end", G_CALLBACK(hideInfobox), infobox);
+	hideInfobox(infobox);
+
+	//következő játékos megjelenítése és elrejtése attól függően, hogy megy-e a játék
+	/*GtkBox * nextbox = GTK_BOX(gtk_builder_get_object(builder, "nextbox"));
+	g_signal_connect_swapped(communicator, "game-started", G_CALLBACK(showNextbox), nextbox);
+	g_signal_connect_swapped(communicator, "game-end", G_CALLBACK(hideNextbox), nextbox);
+	hideNextbox(nextbox);*/
+
+	//ai kapcsolók
+	void * cg[2] = {(void*)communicator, (void*)game};
+	g_signal_connect(gtk_builder_get_object(builder, "white_ai"), "notify::active", G_CALLBACK(ai_feher_switched), cg);
+	g_signal_connect(gtk_builder_get_object(builder, "black_ai"), "notify::active", G_CALLBACK(ai_fekete_switched), cg);
+
 
 	g_object_unref(builder);
 
@@ -66,6 +106,8 @@ int main(int argc, char *argv[]){
 
 
 	gtk_main();
+
+	free(game);
 
 	return 0;
 }
@@ -76,57 +118,7 @@ int main(int argc, char *argv[]){
  * Glade hívja meg.
  */
 void on_grid_realize(GtkGrid * grid){
-	initBuffers();
 	initGrid(grid);
-}
-
-//glade hívja meg
-void bind_communicator(GObject * communicator, GtkGrid * grid){
-	//játék objektum létrehozása
-	//TODO: kilépéskor törlés
-	t_game * game = g_malloc(sizeof(t_game));
-
-	//játék logika összekötése a grafikával és a vezérléssel
-	/*g_signal_connect_swapped(communicator, "game-table-changed", G_CALLBACK(refreshGrid), grid);
-	g_signal_connect_swapped(communicator, "user-new-game", G_CALLBACK(newGame), game);
-	g_signal_connect_swapped(communicator, "user-new-move", G_CALLBACK(lep), game);
-	g_signal_connect(communicator, "game-move-done", G_CALLBACK(ai_lep), NULL);
-	g_signal_connect_swapped(communicator, "game-player-onceagain", G_CALLBACK(dialogUjrajon), gtk_widget_get_window(GTK_WIDGET(communicator)));
-	g_signal_connect_swapped(communicator, "game-end", G_CALLBACK(dialogGameOver), gtk_widget_get_window(GTK_WIDGET(communicator)));
-
-	g_signal_connect_swapped(communicator, "user-ai-fekete-changed", G_CALLBACK(changeAiFekete), game);
-	g_signal_connect_swapped(communicator, "user-ai-feher-changed", G_CALLBACK(changeAiFeher), game);*/
-}
-
-//soronkövetkező játékos frissítése
-//glade hívja meg
-void bind_next_player(GtkImage * korongImage, GObject * communicator){
-	g_signal_connect_swapped(communicator, "game-next-player-changed", G_CALLBACK(refreshNextPlayer), korongImage);
-}
-
-//állapotjelsző frissítése
-//glade hívja meg
-void bind_allas_update(GtkGrid * allasGrid, GObject * communicator){
-	initAllas(allasGrid);
-	g_signal_connect_swapped(communicator, "game-allas-changed", G_CALLBACK(refreshAllas), allasGrid);
-}
-
-//állapotjelsző megjelenítése és elrejtése attól függően, hogy megy-e a játék
-//glade hívja meg
-void bind_infobox(GtkBox * infobox, GObject * communicator){
-
-	g_signal_connect_swapped(communicator, "game-started", G_CALLBACK(showInfobox), infobox);
-	//g_signal_connect_swapped(communicator, "game-end", G_CALLBACK(hideInfobox), infobox);
-	hideInfobox(infobox);
-}
-
-//következő játékos megjelenítése és elrejtése attól függően, hogy megy-e a játék
-//glade hívja meg
-void bind_nextbox(GtkBox * nextbox, GObject * communicator){
-
-	//g_signal_connect_swapped(communicator, "game-started", G_CALLBACK(showNextbox), nextbox);
-	//g_signal_connect_swapped(communicator, "game-end", G_CALLBACK(hideNextbox), nextbox);
-	//hideNextbox(nextbox);
 }
 
 /**
@@ -136,17 +128,3 @@ void on_button_new_game_clicked(GtkWidget* button, GObject * communicator){
 	g_signal_emit_by_name(communicator, "user-new-game");
 
 }
-
-
-void ai_fekete_switched(GtkSwitch * fekete_switch, GObject * communicator){
-	//g_signal_emit_by_name(communicator, "user-ai-fekete-changed", gtk_switch_get_active(fekete_switch));
-}
-
-
-
-void ai_feher_switched(GtkSwitch * feher_switch, GObject * communicator){
-	printf("%d\n", gtk_switch_get_active(feher_switch));
-	g_signal_emit_by_name(communicator, "user-ai-feher-changed", gtk_switch_get_active(feher_switch));
-
-}
-

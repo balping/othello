@@ -23,8 +23,6 @@ void newGame(t_game *game, GObject *communicator){
 	//mindig a fekete kezd
 	game->next = FEKETE;
 
-	game->ai[FEHER] = false;
-	game->ai[FEKETE] = false;
 
 	lehetosegSzamol(game);
 	allasSzamol(game, communicator);
@@ -268,12 +266,12 @@ void ai_lep(GObject *communicator, t_game *game){
 
 }
 
-void changeAiFeher(t_game *game, gboolean allapot){
-	game->ai[FEHER] = (bool)allapot;
-}
 
-void changeAiFekete(t_game *game, gboolean allapot){
-	game->ai[FEKETE] = (bool)allapot;
+void changeAi(GObject *communicator, t_game *game, t_player player, bool allapot){
+	game->ai[player] = allapot;
+
+	//trükközés, hogy ha az éppen soronkövetkező játékost kapcsolják be, mint ai, akkor lépjen
+	g_signal_emit_by_name(communicator, "game-move-done", game);
 }
 
 
@@ -332,17 +330,6 @@ void initSignals(){
 				 g_cclosure_marshal_VOID__BOXED,
 				 G_TYPE_NONE, 1, G_TYPE_POINTER);
 
-	g_signal_new("user-ai-fekete-changed",
-				 G_TYPE_OBJECT, G_SIGNAL_RUN_FIRST,
-				 0, NULL, NULL,
-				 g_cclosure_marshal_VOID__BOXED,
-				 G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
-
-	g_signal_new("user-ai-feher-changed",
-				 G_TYPE_OBJECT, G_SIGNAL_RUN_FIRST,
-				 0, NULL, NULL,
-				 g_cclosure_marshal_VOID__BOXED,
-				 G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
 }
 
 

@@ -40,13 +40,6 @@
  * 		game-allas-changed:	megváltozott a játék állása
  * 							params: t_game * game
  *
- * 		user-ai-fekete-changed:
- * 							átböggyintették a fekete ai kapcsolót
- * 							params: gbool allapot
- *
- * 		user-ai-feher-changed:
- * 							átböggyintették a fehér ai kapcsolót
- * 							params: gboolean allapot
  */
 void initSignals();
 
@@ -128,10 +121,16 @@ void allasSzamol(t_game *game, GObject *communicator );
  */
 t_kurzor ai_legjobbMezo(t_game * game);
 
+/**
+ * Ha az aktuális játékos éppen automata, lép
+ */
 void ai_lep(GObject *communicator, t_game *game);
 
-void changeAiFeher(t_game * game, gboolean allapot);
-void changeAiFekete(t_game * game, gboolean allapot);
+/**
+ * Megváltoztatja, hogy melyik játékos legyen automata
+ */
+void changeAi(GObject *communicator, t_game * game, t_player player, bool allapot);
+
 
 
 #endif //OTHELLO_GAME_H
