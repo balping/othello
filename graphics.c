@@ -141,7 +141,7 @@ void dialogGameOver(GtkWindow *window, t_game *game){
 void show_about(){
 	gtk_show_about_dialog (NULL,
 						   "program-name", "Othello",
-						   "version", "v1.0.0",
+						   "version", "v1.0.1",
 						   "comments", "GTK+-on alapuló\nklasszikus Othello játék",
 						   "copyright", "Kovács Balázs Marcell, 2015",
 						   "license-type", GTK_LICENSE_MIT_X11,
@@ -191,16 +191,35 @@ void hideNextbox(GtkBox *nextbox){
 }
 
 
-void show_help(GtkImageMenuItem * menu, GtkWindow * helpwindow){
-	gtk_window_set_icon(helpwindow, gdk_pixbuf_new_from_resource("/othello/icon.png", NULL));
-	gtk_window_set_deletable(helpwindow, false);
-	gtk_window_set_resizable(helpwindow, false);
-	gtk_widget_show(GTK_WIDGET( helpwindow));
+void show_help(GtkImageMenuItem * menu, GtkWindow * foablak){
+	GtkWidget *dialog, *label, *content_area;
+	GtkDialogFlags flags;
+
+	// Create the widgets
+	flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+	dialog = gtk_dialog_new_with_buttons ("Leírás",
+										  foablak,
+										  flags,
+										  "_OK",
+										  GTK_RESPONSE_NONE,
+										  NULL);
+	content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+	const char * helptext =  g_bytes_get_data(g_resources_lookup_data("/othello/help.txt", G_RESOURCE_LOOKUP_FLAGS_NONE, NULL), NULL);
+	label = gtk_label_new ( helptext);
+
+	// Ensure that the dialog box is destroyed when the user responds
+
+	g_signal_connect_swapped (dialog,
+							  "response",
+							  G_CALLBACK (gtk_widget_destroy),
+							  dialog);
+
+	// Add the label, and show everything we’ve added
+
+	gtk_container_add (GTK_CONTAINER (content_area), label);
+	gtk_widget_show_all (dialog);
 }
 
-void hide_help(GtkButton * button, GtkWindow * helpwindow){
-	gtk_widget_hide(GTK_WIDGET(helpwindow));
-}
 
 
 void init_css(){

@@ -10,5 +10,6 @@
 		<file>icon.png</file>
 		<file preprocess="xml-stripblanks" compressed="true">o1.glade</file>
 		<file>style.css</file>
+		<file compressed="true">help.txt</file>
 	</gresource>
 </gresources>
