@@ -40,7 +40,7 @@ add_definitions(${GTK3_CFLAGS_OTHER})
 
 set(SOURCE_FILES
         graphics.c
-        othello.c
+        contoller.c
         game.c
         ${CMAKE_BINARY_DIR}/resources.c)
 
