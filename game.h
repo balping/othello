@@ -78,9 +78,9 @@ t_player otherPlayer(t_player player);
  * Végigmegy a tábla összes mezőjén és ami a következő
  * lépésben megjátszható, azt megjelöli.
  *
- * Visszatérés: van-e megjátszható mező a táblán
+ * Visszatérés: hány megjátszható mező van a táblán
  */
-bool lehetosegSzamol(t_game *game);
+int lehetosegSzamol(t_game *game);
 
 /**
  * Megcsinálja a lépést, átfordítja a korongokat

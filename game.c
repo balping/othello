@@ -15,10 +15,10 @@ void newGame(t_game *game, GObject *communicator){
 	}
 
 	//középső kezdő korongok elhelyezése
-	game->table[3][3] = MEZO_FEKETE;
-	game->table[3][4] = MEZO_FEHER;
-	game->table[4][3] = MEZO_FEHER;
-	game->table[4][4] = MEZO_FEKETE;
+	game->table[3][3] = MEZO_FEHER;
+	game->table[3][4] = MEZO_FEKETE;
+	game->table[4][3] = MEZO_FEKETE;
+	game->table[4][4] = MEZO_FEHER;
 
 	//mindig a fekete kezd
 	game->next = FEKETE;
@@ -42,12 +42,12 @@ t_player otherPlayer(t_player player){
 	}
 }
 
-bool lehetosegSzamol(t_game *game){
+int lehetosegSzamol(t_game *game){
 	char x, y;
 	bool lehete;
 	signed char xx, yy;
 	signed char dx, dy;
-	bool volte = false;
+	int n_kattinthato = 0; //hány megjátszható mező van a táblán
 
 	t_player jatekos = game->next;
 	t_player other_jatekos = otherPlayer(jatekos);
@@ -89,7 +89,7 @@ bool lehetosegSzamol(t_game *game){
 
 				if(lehete){
 					game->table[x][y] = MEZO_KATTINTHATO;
-					volte = true;
+					n_kattinthato++;
 				}else{
 					game->table[x][y] = MEZO_URES;
 				}
@@ -98,7 +98,7 @@ bool lehetosegSzamol(t_game *game){
 		}
 	}
 
-	return volte;
+	return n_kattinthato;
 
 }
 
