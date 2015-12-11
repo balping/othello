@@ -10,6 +10,8 @@
 //http://prognotes.net/2015/06/gtk-3-c-program-using-glade-3/
 
 void init_css();
+void ai_feher_switched(GtkSwitch * feher_switch, GObject * communicator);
+
 
 int main(int argc, char *argv[]){
 
@@ -41,6 +43,22 @@ int main(int argc, char *argv[]){
 	initSignals();
 	//g_signal_connect(communicator, "game-table-changed", gtk_main_quit, NULL);
 
+	//g_signal_connect(gtk_builder_get_object(builder, "white_ai"), "notify::active", G_CALLBACK(ai_feher_switched), communicator);
+
+	//bind
+	t_game * game = g_malloc(sizeof(t_game));
+	g_signal_connect_swapped(communicator, "game-table-changed", G_CALLBACK(refreshGrid), gtk_builder_get_object(builder, "grid_game"));
+	g_signal_connect_swapped(communicator, "user-new-game", G_CALLBACK(newGame), game);
+	g_signal_connect_swapped(communicator, "user-new-move", G_CALLBACK(lep), game);
+	g_signal_connect(communicator, "game-move-done", G_CALLBACK(ai_lep), NULL);
+	g_signal_connect_swapped(communicator, "game-player-onceagain", G_CALLBACK(dialogUjrajon), gtk_widget_get_window(GTK_WIDGET(communicator)));
+	g_signal_connect_swapped(communicator, "game-end", G_CALLBACK(dialogGameOver), gtk_widget_get_window(GTK_WIDGET(communicator)));
+
+	g_signal_connect_swapped(communicator, "user-ai-fekete-changed", G_CALLBACK(changeAiFekete), game);
+	g_signal_connect_swapped(communicator, "user-ai-feher-changed", G_CALLBACK(changeAiFeher), game);
+
+	g_signal_connect_swapped(communicator, "game-next-player-changed", G_CALLBACK(refreshNextPlayer), korongImage);
+
 	g_object_unref(builder);
 
 	gtk_widget_show(window);
@@ -69,7 +87,7 @@ void bind_communicator(GObject * communicator, GtkGrid * grid){
 	t_game * game = g_malloc(sizeof(t_game));
 
 	//játék logika összekötése a grafikával és a vezérléssel
-	g_signal_connect_swapped(communicator, "game-table-changed", G_CALLBACK(refreshGrid), grid);
+	/*g_signal_connect_swapped(communicator, "game-table-changed", G_CALLBACK(refreshGrid), grid);
 	g_signal_connect_swapped(communicator, "user-new-game", G_CALLBACK(newGame), game);
 	g_signal_connect_swapped(communicator, "user-new-move", G_CALLBACK(lep), game);
 	g_signal_connect(communicator, "game-move-done", G_CALLBACK(ai_lep), NULL);
@@ -77,7 +95,7 @@ void bind_communicator(GObject * communicator, GtkGrid * grid){
 	g_signal_connect_swapped(communicator, "game-end", G_CALLBACK(dialogGameOver), gtk_widget_get_window(GTK_WIDGET(communicator)));
 
 	g_signal_connect_swapped(communicator, "user-ai-fekete-changed", G_CALLBACK(changeAiFekete), game);
-	g_signal_connect_swapped(communicator, "user-ai-feher-changed", G_CALLBACK(changeAiFeher), game);
+	g_signal_connect_swapped(communicator, "user-ai-feher-changed", G_CALLBACK(changeAiFeher), game);*/
 }
 
 //soronkövetkező játékos frissítése
@@ -124,7 +142,11 @@ void ai_fekete_switched(GtkSwitch * fekete_switch, GObject * communicator){
 	//g_signal_emit_by_name(communicator, "user-ai-fekete-changed", gtk_switch_get_active(fekete_switch));
 }
 
+
+
 void ai_feher_switched(GtkSwitch * feher_switch, GObject * communicator){
-	//g_signal_emit_by_name(communicator, "user-ai-feher-changed", gtk_switch_get_active(feher_switch));
+	printf("%d\n", gtk_switch_get_active(feher_switch));
+	g_signal_emit_by_name(communicator, "user-ai-feher-changed", gtk_switch_get_active(feher_switch));
+
 }
 
